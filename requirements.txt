@@ -4,3 +4,5 @@ eccodes
 matplotlib
 requests
 numpy
+hycom
+netCDF4

@@ -54,7 +54,10 @@ current_speed = np.sqrt(uo**2 + vo**2)
 # Plot the surface current speed
 print("[*] Plotting surface current magnitude...")
 plt.figure(figsize=(12, 6))
-current_speed.plot(cmap='viridis')
+#current_speed.plot(cmap='viridis')
+current_speed = current_speed.squeeze()
+print(current_speed.shape)
+
 plt.title(f"Surface Ocean Current Speed (m/s) on {date_str} Forecast Hour {forecast_hour}")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
