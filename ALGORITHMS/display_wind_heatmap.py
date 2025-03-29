@@ -41,7 +41,7 @@ download_file(full_url, output_path)
 # -------- READ WIND DATA -------- #
 print("[*] Reading wind data...")
 ds = xr.open_dataset(output_path, engine='cfgrib',
-                     filter_by_keys={'typeOfLevel': 'heightAboveGround', 'level': 10})
+                     filter_by_keys={'typeOfLevel': 'heightAboveGround', 'level': 10}, decode_timedelta=False)
 
 # Extract wind components
 u10 = ds['u10']
@@ -53,7 +53,9 @@ wind_speed = np.sqrt(u10**2 + v10**2)
 # -------- PLOT -------- #
 print("[*] Plotting wind speed...")
 plt.figure(figsize=(10, 6))
-wind_speed.isel(time=0).plot(cmap='viridis')
+#wind_speed.isel(time=0).plot(cmap='viridis')
+print(wind_speed.shape)
+wind_speed.squeeze().plot(cmap='viridis')
 plt.title("10-meter Wind Speed (m/s)")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")
