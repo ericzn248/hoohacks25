@@ -9,13 +9,17 @@ class Vector():
         self.mag = math.sqrt(x**2+y**2)
 
 class Location():
-    def __init__(self, lat, long, wind, current):
+    def __init__(self, lat, long):
         self.lat = lat
         self.long = long
-        self.wind = wind
         self.latr = lat*(math.pi/180)
         self.longr = long*(math.pi/180)
-        self.current = current
+    
+    def __eq__(self,loc2):
+        return abs(self.lat-loc2.lat)+abs(self.long-loc2.long) < 0.0001 #small error for float calcs
+    
+    def __hash__(self):
+        return hash((round(self.lat, 5), round(self.lon, 5)))
     
     def distance(self, loc2): #gets distance between locations in kilometers
         dlat = abs(loc2.lat-self.lat)
@@ -25,6 +29,6 @@ class Location():
         c = 2*math.atan2(math.sqrt(hav), math.sqrt(1-hav))
         return 6371*c
     
-    def costTo(self, loc2): #TODO: return a distance & time
+    def costTo(self, loc2, wind, current): #TODO: return a distance & time
         return 0
         
