@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Planner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('images/shipsbg.png') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 60px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            width: 60%;
+            max-width: 800px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: scale(1.05);
+        }
+        h2 {
+            font-size: 36px;
+            color: #333;
+        }
+        label {
+            font-size: 18px;
+            color: #555;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 15px;
+            margin: 15px 0;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            font-size: 18px;
+        }
+        button {
+            width: calc(100% - 20px);
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Route Planner</h2>
+    <form action="nextpage.html" method="GET">
+        <label for="start">Start Location:</label>
+        <input type="text" id="start" name="start" placeholder="Enter start location" required>
+        
+        <label for="destination">Destination:</label>
+        <input type="text" id="destination" name="destination" placeholder="Enter destination" required>
+        
+        <button type="submit">Go</button>
+    </form>
+</div>
+</body>
+</html>
