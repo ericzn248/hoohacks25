@@ -12,4 +12,7 @@ for i in range(len(lats)):
         lon = lons[j]
         uo_val = uo[i, j]
         vo_val = vo[i, j]
+        print(type(lat), type(uo_val))
         print(f"Lat: {lat:2f}, Lon: {lon:.2f} → uo: {uo_val:.3f}, vo: {vo_val:.3f}")
+
+
