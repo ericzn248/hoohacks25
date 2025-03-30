@@ -1,183 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Route Planner</title>
+    <title>Shipping Supply Chain Optimization</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
-            background: url('images/ships_bg.png') no-repeat center center/cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #f9fafc;
+            color: #444;
         }
-        .container {
-            background: white;
-            padding: 70px;
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            width: 60%;
-            max-width: 800px;
-            text-align: center;
-            transition: transform 0.3s ease;
+
+        .hero {
             position: relative;
+            width: 100%;
+            height: 80vh;
+            /* Makes the hero section take up 80% of the viewport height */
+            overflow: hidden;
         }
-        .container:hover {
-            transform: scale(1.05);
+
+        .hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Ensures the image covers the entire hero section */
+            filter: brightness(70%);
+            /* Darkens the image slightly for better text contrast */
         }
-        h2 {
-            font-size: 42px;
-            color: #333;
-        }
-        label {
-            font-size: 22px;
-            color: #555;
-        }
-        input, button {
-            width: calc(100% - 20px);
-            padding: 20px;
-            margin: 20px 0;
-            border: 2px solid #ccc;
-            border-radius: 10px;
-            font-size: 22px;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #45a049;
-        }
-        .autocomplete-suggestions {
-            border: 1px solid #ccc;
-            max-height: 150px;
-            overflow-y: auto;
-            background: white;
+
+        .hero-text {
             position: absolute;
-            z-index: 9999;
-            width: calc(100% - 110px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            display: none;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
         }
-        .autocomplete-suggestion {
-            padding: 15px;
+
+        .hero-text h1 {
+            font-size: 60px;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .hero-text p {
+            font-size: 24px;
+            margin-top: 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+        }
+
+        main {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        main h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        main p {
+            font-size: 20px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .image-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .image-section img {
+            width: 45%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 40px;
         }
-        .autocomplete-suggestion:hover {
-            background: #f0f0f0;
+
+        .cta-button:hover {
+            background-color: #0056b3;
         }
-        .selected {
-            background: #d0eaff !important;
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 16px;
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const ports = ['Huston', 'Tampa', 'New Orleans', 'Cancun', 'Mexico City'];
-            
-            const createAutocomplete = (id) => {
-                const input = document.getElementById(id);
-                const suggestionBox = document.createElement('div');
-                suggestionBox.classList.add('autocomplete-suggestions');
-                input.parentNode.insertBefore(suggestionBox, input.nextSibling);
-                
-                let selectedIndex = -1;
-                
-                const showSuggestions = () => {
-                    suggestionBox.innerHTML = '';
-                    suggestionBox.style.display = 'block';
-                    selectedIndex = -1;
-                    ports.forEach((port, index) => {
-                        const suggestion = document.createElement('div');
-                        suggestion.classList.add('autocomplete-suggestion');
-                        suggestion.textContent = port;
-                        suggestion.addEventListener('click', () => {
-                            input.value = port;
-                            suggestionBox.style.display = 'none';
-                        });
-                        suggestionBox.appendChild(suggestion);
-                    });
-                };
-                
-                const updateSelection = () => {
-                    const suggestions = suggestionBox.querySelectorAll('.autocomplete-suggestion');
-                    suggestions.forEach((s, i) => {
-                        s.classList.toggle('selected', i === selectedIndex);
-                    });
-                };
-                
-                input.addEventListener('keydown', (e) => {
-                    const suggestions = suggestionBox.querySelectorAll('.autocomplete-suggestion');
-                    if (e.key === 'ArrowDown') {
-                        selectedIndex = (selectedIndex + 1) % suggestions.length;
-                        updateSelection();
-                    } else if (e.key === 'ArrowUp') {
-                        selectedIndex = (selectedIndex - 1 + suggestions.length) % suggestions.length;
-                        updateSelection();
-                    } else if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (selectedIndex >= 0 && suggestions[selectedIndex]) {
-                            input.value = suggestions[selectedIndex].textContent;
-                            suggestionBox.style.display = 'none';
-                        }
-                    }
-                });
-                
-                input.addEventListener('focus', showSuggestions);
-                input.addEventListener('input', () => {
-                    const query = input.value.toLowerCase();
-                    suggestionBox.innerHTML = '';
-                    suggestionBox.style.display = 'block';
-                    
-                    const filtered = ports.filter(port => port.toLowerCase().includes(query));
-                    if (filtered.length === 0) {
-                        suggestionBox.style.display = 'none';
-                    } else {
-                        filtered.forEach((port, index) => {
-                            const suggestion = document.createElement('div');
-                            suggestion.classList.add('autocomplete-suggestion');
-                            suggestion.textContent = port;
-                            suggestion.addEventListener('click', () => {
-                                input.value = port;
-                                suggestionBox.style.display = 'none';
-                            });
-                            suggestionBox.appendChild(suggestion);
-                        });
-                    }
-                });
-                
-                document.addEventListener('click', (e) => {
-                    if (!input.contains(e.target) && !suggestionBox.contains(e.target)) {
-                        suggestionBox.style.display = 'none';
-                    }
-                });
-            };
-            
-            createAutocomplete('start');
-            createAutocomplete('destination');
-        });
-    </script>
 </head>
+
 <body>
-<div class="container">
-    <h2>Route Planner</h2>
-    <form action="/submit-form" method="POST">  
-        <label for="start">Start Port:</label>
-        <input type="text" id="start" name="start" placeholder="Enter start port" required>
-        
-        <label for="destination">Destination Port:</label>
-        <input type="text" id="destination" name="destination" placeholder="Enter destination port" required>
-        
-        <button type="submit">Start Calculating Optimal Route</button>
-    </form>
-</div>
+
+    </div>
+    <div class="hero">
+        <img src="images/ships_bg.png" alt="Ships on the Ocean">
+        <div class="hero-text">
+            <h1>Optimize Your Shipping Routes</h1>
+            <p>Reduce fuel consumption and carbon emissions with cutting-edge technology</p>
+        </div>
+    </div>
+    <main>
+        <h2>Why Our App is Needed</h2>
+        <p>
+            The shipping industry is responsible for a significant portion of global carbon emissions.
+            By optimizing shipping routes, we can reduce fuel consumption, lower costs, and contribute
+            to a more sustainable future. Our app is designed to make shipping smarter and greener.
+        </p>
+        <h2>How It Works</h2>
+        <p>
+            Our app leverages real-time data on wind patterns and ocean currents to calculate the most
+            energy-efficient routes for ships. By using these natural forces, we help reduce fuel
+            consumption and minimize environmental impact.
+        </p>
+        <div class="image-section">
+            <img src="images/winds_map.png" alt="Winds Map">
+            <img src="images/currents_map.png" alt="Ocean Currents Map">
+        </div>
+        <a href="/enterCities" class="cta-button">Get Started</a>
+    </main>
+    <footer>
+        <p>&copy; 2023 Shipping Supply Chain Optimization. All rights reserved.</p>
+    </footer>
 </body>
+
 </html>

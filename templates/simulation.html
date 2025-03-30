@@ -5,16 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ship Route Plotter</title>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        #container { position: relative; width: 2000px; height: 1300px; }
-        canvas { position: absolute; top: 0; left: 0; }
-        button { position: absolute; top: 10px; left: 10px; z-index: 10; padding: 10px 20px; cursor: pointer; }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        #container {
+            position: relative;
+            width: 2000px;
+            height: 1300px;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        #info p {
+            margin: 5px 0;
+        }
+
+        button {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:active {
+            background-color: #003f7f;
+        }
     </style>
 </head>
 <body>
 <div id="container">
-    <p>Starting City: {{ start_city }}</p>
-    <p>Ending City: {{ end_city }}</p>
     <img id="map" src="images/nautical_map.jpg" alt="World Map" width="2000" height="1300">
     <canvas id="canvas" width="2000" height="1300"></canvas>
     <button onclick="startPlotting()">Start Plotting Optimal Trajectory</button>
@@ -24,9 +81,11 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// Example pixel locations of the cities
-const startCity = "{{ start_city }}";
-const endCity = "{{ end_city }}";
+const startCity = { x: {{ start_coords.x }}, y: {{ start_coords.y }} };
+const endCity = { x: {{ end_coords.x }}, y: {{ end_coords.y }} };
+
+console.log(startCity, endCity);
+
 
 // Example path coordinates
 const path = [

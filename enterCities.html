@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Planner</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('images/ships_bg.png') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 70px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            width: 60%;
+            max-width: 800px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        .container:hover {
+            transform: scale(1.05);
+        }
+        h2 {
+            font-size: 42px;
+            color: #333;
+        }
+        label {
+            font-size: 22px;
+            color: #555;
+        }
+        input, button {
+            width: calc(100% - 20px);
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            font-size: 22px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .autocomplete-suggestions {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            background: white;
+            position: absolute;
+            z-index: 9999;
+            width: calc(100% - 110px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .autocomplete-suggestion {
+            padding: 15px;
+            cursor: pointer;
+        }
+        .autocomplete-suggestion:hover {
+            background: #f0f0f0;
+        }
+        .selected {
+            background: #d0eaff !important;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ports = ['Huston', 'Tampa', 'New Orleans', 'Cancun', 'Mexico City'];
+            
+            const createAutocomplete = (id) => {
+                const input = document.getElementById(id);
+                const suggestionBox = document.createElement('div');
+                suggestionBox.classList.add('autocomplete-suggestions');
+                input.parentNode.insertBefore(suggestionBox, input.nextSibling);
+                
+                let selectedIndex = -1;
+                
+                const showSuggestions = () => {
+                    suggestionBox.innerHTML = '';
+                    suggestionBox.style.display = 'block';
+                    selectedIndex = -1;
+                    ports.forEach((port, index) => {
+                        const suggestion = document.createElement('div');
+                        suggestion.classList.add('autocomplete-suggestion');
+                        suggestion.textContent = port;
+                        suggestion.addEventListener('click', () => {
+                            input.value = port;
+                            suggestionBox.style.display = 'none';
+                        });
+                        suggestionBox.appendChild(suggestion);
+                    });
+                };
+                
+                const updateSelection = () => {
+                    const suggestions = suggestionBox.querySelectorAll('.autocomplete-suggestion');
+                    suggestions.forEach((s, i) => {
+                        s.classList.toggle('selected', i === selectedIndex);
+                    });
+                };
+                
+                input.addEventListener('keydown', (e) => {
+                    const suggestions = suggestionBox.querySelectorAll('.autocomplete-suggestion');
+                    if (e.key === 'ArrowDown') {
+                        selectedIndex = (selectedIndex + 1) % suggestions.length;
+                        updateSelection();
+                    } else if (e.key === 'ArrowUp') {
+                        selectedIndex = (selectedIndex - 1 + suggestions.length) % suggestions.length;
+                        updateSelection();
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (selectedIndex >= 0 && suggestions[selectedIndex]) {
+                            input.value = suggestions[selectedIndex].textContent;
+                            suggestionBox.style.display = 'none';
+                        }
+                    }
+                });
+                
+                input.addEventListener('focus', showSuggestions);
+                input.addEventListener('input', () => {
+                    const query = input.value.toLowerCase();
+                    suggestionBox.innerHTML = '';
+                    suggestionBox.style.display = 'block';
+                    
+                    const filtered = ports.filter(port => port.toLowerCase().includes(query));
+                    if (filtered.length === 0) {
+                        suggestionBox.style.display = 'none';
+                    } else {
+                        filtered.forEach((port, index) => {
+                            const suggestion = document.createElement('div');
+                            suggestion.classList.add('autocomplete-suggestion');
+                            suggestion.textContent = port;
+                            suggestion.addEventListener('click', () => {
+                                input.value = port;
+                                suggestionBox.style.display = 'none';
+                            });
+                            suggestionBox.appendChild(suggestion);
+                        });
+                    }
+                });
+                
+                document.addEventListener('click', (e) => {
+                    if (!input.contains(e.target) && !suggestionBox.contains(e.target)) {
+                        suggestionBox.style.display = 'none';
+                    }
+                });
+            };
+            
+            createAutocomplete('start');
+            createAutocomplete('destination');
+        });
+    </script>
+</head>
+<body>
+<div class="container">
+    <h2>Route Planner</h2>
+    <form action="/submit-form" method="POST">  
+        <label for="start">Start Port:</label>
+        <input type="text" id="start" name="start" placeholder="Enter start port" required>
+        
+        <label for="destination">Destination Port:</label>
+        <input type="text" id="destination" name="destination" placeholder="Enter destination port" required>
+        
+        <button type="submit">Start Calculating Optimal Route</button>
+    </form>
+</div>
+</body>
+</html>
