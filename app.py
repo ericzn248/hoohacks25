@@ -97,7 +97,7 @@ citiesLatLon = {
     "Houston": {"lat": 29, "lon": -94.5},
     "Tampa": {"lat": 27.5, "lon": -83},
     "Mexico City": {"lat": 22, "lon": -97.5},
-    "New Orleans": {"lat": 29.5, "lon": -89},
+    "Havana": {"lat": 23.5, "lon": -82.5},
     "Cancun": {"lat": 21, "lon": -86.5},
 }
 
@@ -105,7 +105,7 @@ citiesXY = {
     "Houston": {"x": 332, "y": 190},
     "Tampa": {"x": 1175, "y": 330},
     "Mexico City": {"x": 117, "y": 743},
-    "New Orleans": {"x": 690, "y": 130},
+    "Havana": {"x": 1200, "y": 660},
     "Cancun": {"x": 890, "y": 820},
 }
 
