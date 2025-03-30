@@ -40,13 +40,13 @@
         }
 
         .hero-text h1 {
-            font-size: 170px;
+            font-size: 150px;
             margin: 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
         }
 
         .hero-text p {
-            font-size: 64px;
+            font-size: 40px;
             margin-top: 10px;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
         }
@@ -54,20 +54,23 @@
         /* Main content */
         main {
             padding: 40px 20px;
-            max-width: 1750px;
+            max-width: 1500px;
             margin: 0 auto;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         main h2 {
-            font-size: 50px;
+            font-size: 45px;
             margin-bottom: 20px;
             color: #007bff;
         }
 
         main ul {
             text-align: left;
-            font-size: 25px;
+            font-size: 20px;
             line-height: 1.8;
             margin: 20px auto;
             /* max-width: 800px; */
@@ -100,9 +103,47 @@
         }
 
 
-        /* Call-to-action button */
-        .cta-button {
+        /* font end pipeline */
+        .pipeline-section {
+            text-align: center;
+            margin-top: 50px;
+            padding: 40px 100px;
+            background-color: #EEE;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+        }
+
+
+        .pipeline-section h2 {
+            font-size: 36px;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .pipeline-section p {
+            font-size: 20px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .pipeline-section ul {
+            text-align: left;
+            font-size: 18px;
+            line-height: 1.8;
+            margin: 20px auto;
+            max-width: 800px;
+            color: #444;
+        }
+
+        .pipeline-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .pipeline-section .cta-button {
             display: inline-block;
+            margin-top: 20px;
             padding: 15px 40px;
             font-size: 20px;
             font-weight: bold;
@@ -113,10 +154,9 @@
             text-decoration: none;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            margin-top: 40px;
         }
 
-        .cta-button:hover {
+        .pipeline-section .cta-button:hover {
             background-color: #0056b3;
         }
 
@@ -141,7 +181,7 @@
         <img src="images/ships_bg.png" alt="Ships on the Ocean">
         <div class="hero-text">
             <h1>BlueVect</h1>
-            <p>Optimizing Shipping for a Sustainable Future</p>
+            <p>Sustainable Maritime Shipping Optimization</p>
         </div>
     </div>
     <main>
@@ -168,17 +208,20 @@
 
         <div class="double-container">
             <div class="image">
-                <img src="images/ship_example.jpeg" alt="Ship Example">
+                <img src="images/ship_example2.jpeg" alt="Ship Example">
             </div>
             <div class="text">
                 <h2>Our Algorithm</h2>
                 <ul>
-                    <li>BlueVect uses real-time data on wind patterns and ocean currents to calculate the most
-                        energy-efficient routes for ships.</li>
-                    <li>By leveraging these natural forces, BlueVect helps reduce fuel consumption and minimize
-                        environmental impact.</li>
-                    <li>Advanced algorithms ensure that shipping companies can achieve their sustainability goals while
-                        optimizing operational efficiency.</li>
+                    <li>BlueVect leverages wind and ocean current data from NOAA to calculate the most energy-efficient
+                        routes for maritime shipping.
+                    </li>
+                    <li> By combining advanced A* pathfinding with vector-based force modeling, BlueVect enables
+                        shipping companies to optimize operational efficiency while supporting their sustainability
+                        goals.</li>
+                    <li>
+                        The platform is designed to reduce fuel consumption, lower emissions, and minimize environmental
+                        impact — all while maintaining reliable and resilient supply chains.</li>
                 </ul>
             </div>
         </div>
@@ -192,7 +235,26 @@
                 <p class="caption">Current Map: Used to optimize routes based on ocean currents.</p>
             </div>
         </div>
-        <a href="/enterCities" class="cta-button">Get Started</a>
+        <div class="pipeline-section">
+            <h2>How to use BlueVect</h2>
+            <p>
+                BlueVect simplifies the process of optimizing shipping routes with an intuitive and efficient pipeline:
+            </p>
+            <ul>
+                <li><strong>Step 1:</strong> On the first page, users select two cities as the starting and ending
+                    points for their shipping route.</li>
+                <li><strong>Step 2:</strong> The backend processes NOAA weather data, including wind patterns and
+                    ocean currents, to calculate the optimal path between the selected cities.</li>
+                <li><strong>Step 3:</strong> Once the algorithm completes, the final page displays the optimal path
+                    plotted on a map, along with the estimated energy savings achieved by using the optimized route.
+                </li>
+            </ul>            
+            <p>
+                BlueVect currently only works locally, when our backend Flask Server is running. If you’d like to try out BlueVect, please clone our <a href="https://github.com/ericzn248/hoohacks25">github repo</a>, run app.py, and open http://127.0.0.1:5000/ in your browser.
+
+            </p>
+            <a href="/enterCities" class="cta-button">Try BlueVect Now</a>
+        </div>
     </main>
     <footer>
         <p>&copy; 2023 BlueVect. All rights reserved.</p>
