@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .spinner {
+            width: 150px;
+            height: 150px;
+            border: 20px solid #ccc;
+            border-top: 20px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        h1 {
+            font-size: 44px;
+            color: #333;
+            margin-bottom: 60px;
+        }
+
+        /* Progress bar container */
+        .progress-container {
+            width: 100%;
+            max-width: 1000px; /* Wider progress bar */
+            background-color: #f3f3f3;
+            border-radius: 15px; /* More rounded corners */
+            overflow: hidden;
+            margin: 100px auto; /* More spacing above and below */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Slightly larger shadow */
+        }
+
+        /* Progress bar itself */
+        .progress-bar {
+            height: 40px; /* Taller progress bar */
+            width: 0%; /* Initial width */
+            background-color: #3498db;
+            text-align: center;
+            color: white;
+            line-height: 30px; /* Vertically center text */
+            font-size: 25px; /* Larger font size for percentage */
+            transition: width 0.3s ease; /* Smooth transition for width changes */
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="route-title">Calculating route...</h1>
+    <div class="spinner"></div>
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar">0%</div>
+    </div>
+
+    <script>
+        // Fetch city names from Flask server using template variables
+        const city1 = "{{ city1 }}";
+        const city2 = "{{ city2 }}";
+        document.getElementById('route-title').textContent = `Calculating route from ${city1} to ${city2}`;
+
+        // Function to fetch progress from the server
+        async function fetchProgress() {
+            try {
+                const response = await fetch('/progress'); // Replace with your server's progress endpoint
+                if (!response.ok) {
+                    throw new Error('Failed to fetch progress');
+                }
+                const data = await response.json();
+                return data.progress; // Assuming the server returns { progress: <number> }
+            } catch (error) {
+                console.error('Error fetching progress:', error);
+                return null;
+            }
+        }
+
+        // Periodically check progress and update the progress bar
+        const progressBar = document.getElementById('progress-bar');
+        const intervalId = setInterval(async () => {
+            const progress = await fetchProgress();
+            if (progress !== null) {
+                progressBar.style.width = `${progress}%`;
+                progressBar.textContent = `${progress}%`;
+                if (progress >= 100) {
+                    clearInterval(intervalId);
+                    window.location.href = '/simulation'; // Redirect to simulation page
+                }
+            }
+        }, 1000); // Check progress every 1 second
+    </script>
+</body>
+
+</html>

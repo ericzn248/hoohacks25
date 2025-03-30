@@ -81,7 +81,7 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const ports = ['Shanghai', 'Singapore', 'Rotterdam', 'Guangzhou', 'Dubai', 'Antwerp', 'Los Angeles', 'Hamburg', 'Ningbo-Zhoushan', 'Busan'];
+            const ports = ['Huston', 'Tampa', 'New Orleans', 'Cancun', 'Mexico City'];
             
             const createAutocomplete = (id) => {
                 const input = document.getElementById(id);
@@ -169,7 +169,7 @@
 <body>
 <div class="container">
     <h2>Route Planner</h2>
-    <form action="nextpage.html" method="GET">
+    <form action="/submit-form" method="POST">  
         <label for="start">Start Port:</label>
         <input type="text" id="start" name="start" placeholder="Enter start port" required>
         

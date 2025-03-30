@@ -7,3 +7,5 @@ numpy
 hycom
 netCDF4
 scipy
+Flask
+Flask-Cors
