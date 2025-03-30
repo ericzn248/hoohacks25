@@ -43,7 +43,7 @@ download_file(file_url, output_path)
 # ---------------- READ AND PLOT DATA ---------------- #
 print("[*] Reading ocean current data...")
 ds = xr.open_dataset(output_path)
-
+print(ds)
 # Extract the eastward (uo) and northward (vo) surface current components
 uo = ds['u_velocity']  # Eastward velocity at the first time step
 vo = ds['v_velocity']  # Northward velocity at the first time step
