@@ -5,10 +5,7 @@ import math
 import numpy as np
 from time import time
 import matplotlib.pyplot as plt
-import cartopy.crs as ccrs
-import cartopy.feature as cfeature
-
-
+import tkinter
 
 ds = xr.open_dataset('final_data/matched_currents_and_winds000.nc')
 
@@ -19,7 +16,7 @@ CURRENTS_Y = ds['vo_interp'].values
 WINDS_X = ds['u10'].values
 WINDS_Y = ds['v10'].values
 
-# CURRENT_DCT = {}
+# CURRENT_DCT = {} #can potentially pre-process but kinda slow
 # time1 = time()
 # for i in range(len(LATS)):
 #     for j in range(len(LONGS)):
@@ -49,6 +46,24 @@ for i in range(len(LATS)):
             MAX_WIND_MAG = tmp
 MAX_WIND_MAG = math.sqrt(MAX_WIND_MAG)
 
+# lts = [] #for debugging, displayed inputted non-nan winds/currents
+# lngs = []
+# for i in range(len(LATS)):
+#     for j in range(len(LONGS)): 
+#         if(math.isnan(WINDS_X[i,j]) or math.isnan(CURRENTS_X[i,j]) or math.isnan(WINDS_Y[i,j]) or math.isnan(CURRENTS_Y[i,j])): continue
+#         lts.append(LATS[i])
+#         lngs.append(LONGS[j])
+
+# plt.plot(lngs, lts, marker='o', linestyle='-', color='r')
+
+# # Labels and title
+# plt.ylabel("Latitudes")
+# plt.xlabel("Longitudes")
+# plt.title("Non-nans")
+
+# # Display plot
+# plt.show()
+
 HCACHE = {}
 def getH(loc: Location, dest: Location):
     if (key := (loc,dest)) in HCACHE: return HCACHE[key]
@@ -60,10 +75,12 @@ def getH(loc: Location, dest: Location):
 
 def getNbrs(loc : Location):
     nbrs = []
-    for i in [(-0.25,-0.25),(-0.25,0),(-0.25,0.25),(0,-0.25),(0,0.25),(0.25,-0.25),(0.25,0),(0.25,0.25)]:
+    nlist = [(-0.25,-0.25),(-0.25,0),(-0.25,0.25),(0,-0.25),(0,0.25),(0.25,-0.25),(0.25,0),(0.25,0.25)]
+    # nlist = [(-0.5,-0.5),(-0.5,0),(-0.5,0.5),(0,-0.5),(0,0.5),(0.5,-0.5),(0.5,0),(0.5,0.5)]
+    for i in nlist:
         nloc = Location(loc.lat+i[0],loc.long+i[1])
-        lat_idx = int(nloc.lat*4)
-        long_idx = int(nloc.long*4)
+        lat_idx = int(nloc.lat*4)+90
+        long_idx = int(nloc.long*4)+180
         if math.isnan(CURRENTS_X[lat_idx,long_idx]) or math.isnan(WINDS_X[lat_idx,long_idx]): continue
         nbrs.append((nloc,Vector(CURRENTS_X[lat_idx,long_idx],CURRENTS_Y[lat_idx,long_idx]),
                      Vector(WINDS_X[lat_idx,long_idx],WINDS_Y[lat_idx,long_idx])))
@@ -77,20 +94,18 @@ def constructPath(paths,dest):
         p.append(loc)
     p = p[::-1]
     timeSum = 0
+    distSum = 0
     for i in range(len(p[1:])):
         tmp = getNbrs(p[i-1])
         for nbr in tmp:
             (nloc, nwind, ncurrent) = nbr
             if nloc == p[i]: 
                 break
+        distSum += p[i-1].distance(nloc)
         timeSum += p[i-1].costTo(nloc, nwind, ncurrent)
+    print(f"TOTAL DISTANCE OF ROUTE FOUND: {distSum}")
     print(f"TOTAL TIME OF ROUTE FOUND: {timeSum}")
-    lats = []
-    longs = []
-
-    for i in p:
-        lats.append(i.lat)
-        longs.append(i.long)
+    return [p,distSum,timeSum]
     
     # fig, ax = plt.subplots(subplot_kw={"projection": ccrs.PlateCarree()})
 
@@ -110,21 +125,28 @@ def constructPath(paths,dest):
     # # Show plot
     # plt.show()
 
-    plt.plot(lats, longs, marker='o', linestyle='-', color='r')
+def displayPath(pList,closedSet = set()):
+    longs = []
+    lats = []
+    for i in pList:
+        longs.append(i[1])
+        lats.append(i[0])
+    clongs = []
+    clats = []
+    for i in closedSet:
+        clats.append(i.lat)
+        clongs.append(i.long)
+    plt.scatter(clongs, clats, marker='o', color='b')
+    plt.plot(longs, lats, marker='o', linestyle='-', color='r')
 
-    # Labels and title
-    plt.xlabel("Latitudes")
-    plt.ylabel("Longitudes")
+    plt.ylabel("Latitudes")
+    plt.xlabel("Longitudes")
     plt.title("Path Found")
 
-    # Show legend
-    plt.legend()
-
-    # Display plot
     plt.show()
-    return p
 
 def astar(start,dest):
+    time1 = time()
     nodes_processed = 0
     openSet = PriorityQueue()
     closedSet = set()
@@ -136,9 +158,9 @@ def astar(start,dest):
         (f,g,loc,parent) = openSet.get()
         if loc in closedSet: continue
         nodes_processed +=1
-        # if(nodes_processed %2000 == 0): 
-        #     print("2000 processed")
-        #     print(f,loc)
+        if(nodes_processed %1000 == 0): 
+            print("1000 processed")
+            print(f,loc)
 
         closedSet.add(loc)
         path[loc] = parent
@@ -154,20 +176,23 @@ def astar(start,dest):
             # print(ng)
             openSet.put((nf,ng,nloc,loc))
     
-    print(constructPath(path,dest))
+    [pList, distSum, timeSum] = constructPath(path,dest)
+    pList = [i.toTuple() for i in pList]
     print(f"NODES PROCESSED: {nodes_processed}")
-    print(len(closedSet))
+    print(f"TIME TAKEN TO PROCESS: {time()-time1}")
+    displayPath(pList,closedSet)
+    return [pList, distSum, timeSum]
 
-[lat, long] = [26, -82]
-START = Location(lat,long)
+def generate(lat1,long1,lat2,long2):
+    st = Location(lat1,long1)
+    dest = Location(lat2,long2)
 
-[lat, long] = [20, -91.25]
-DESTINATION = Location(lat,long)
+    print(f"START: {st}, DESTINATION: {dest}")
+    print(f"TOTAL DISTANCE: {st.distance(dest)}")
+    nmt = st.costTo(dest, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_WIND_MAG/2, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_CURRENT_MAG/2)
+    print(f"NAIVE MAXIMAL TIME: {nmt}")
+    [pList, distSum, timeSum] = astar(st,dest)
+    return pList, st.distance(dest), nmt, distSum, timeSum
 
-print(f"START: {START}, DESTINATION: {DESTINATION}")
-# print(f"TOTAL DISTANCE: {START.distance(DESTINATION)}")
-# print(f"NAIVE MAXIMAL TIME: {START.costTo(DESTINATION, Vector(START.lat-DESTINATION.lat,START.long-DESTINATION.long).unit()*MAX_WIND_MAG, Vector(START.lat-DESTINATION.lat,START.long-DESTINATION.long).unit()*MAX_CURRENT_MAG)}")
 
-time1 = time()
-astar(START,DESTINATION)
-print(f"PROCESSING TIME TAKEN: {time()-time1}")
+[pList, d_init, nmt, distSum, timeSum] = generate(27.5,-83,21,-86.5)

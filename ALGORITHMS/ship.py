@@ -65,6 +65,9 @@ class Location():
     def __repr__(self):
         return f"Location({self.lat}, {self.long})"
     
+    def toTuple(self):
+        return (self.lat, self.long)
+    
     def distance(self, loc2): #gets distance between locations in kilometers
         dlat = deg2rad(loc2.lat-self.lat)
         dlong = deg2rad(loc2.long-self.long)
