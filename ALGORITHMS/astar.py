@@ -1,4 +1,4 @@
-from ship import Vector, Location, SHIP_SPEED
+from ALGORITHMS.ship import Vector, Location
 from queue import PriorityQueue
 import xarray as xr
 import math
@@ -192,7 +192,8 @@ def generate(lat1,long1,lat2,long2):
     nmt = st.costTo(dest, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_WIND_MAG/2, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_CURRENT_MAG/2)
     print(f"NAIVE MAXIMAL TIME: {nmt}")
     [pList, distSum, timeSum] = astar(st,dest)
-    return pList, st.distance(dest), nmt, distSum, timeSum
+    pctIncrease = 100*(1-(timeSum/nmt))
+    return pList, pctIncrease
 
 
-[pList, d_init, nmt, distSum, timeSum] = generate(27.5,-83,21,-86.5)
+[pList, pctIncrease] = generate(27.5,-83,21,-86.5)
