@@ -43,6 +43,7 @@ print("[*] Reading wind data...")
 ds = xr.open_dataset(output_path, engine='cfgrib',
                      filter_by_keys={'typeOfLevel': 'heightAboveGround', 'level': 10}, decode_timedelta=False)
 
+print(ds)
 # Extract wind components
 u10 = ds['u10']
 v10 = ds['v10']
