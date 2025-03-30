@@ -72,7 +72,7 @@ class Location():
     
     def costTo(self, loc2, wind, current):
     dist_km = self.distance(loc2)
-    dist_m = dist_km * 1000
+    dist_m = dist_km * 1000  # Intended trip distance
 
     dt = 300  # Time step in seconds
     dx = loc2.long - self.long
@@ -84,41 +84,35 @@ class Location():
     time_elapsed = 0.0
 
     while position < dist_m:
-        # Compute actual ship motion through the world (water + current)
         boat_velocity = velocity + current
-
-        # Compute wind drag relative to air
         rel_wind = wind - boat_velocity
 
-        # Drag direction basis
         u_boat = boat_velocity.unit()
         n_boat = Vector(-u_boat.y, u_boat.x)
 
-        # Wind components
         v_parallel = rel_wind.dot(u_boat)
         v_perp_squared = rel_wind.dot(rel_wind) - v_parallel**2
 
-        # Drag forces
         F_parallel = 0.5 * RHO * CD * A_PARALLEL * v_parallel * abs(v_parallel)
         F_perp = 0.5 * RHO * CD * A_PERP * v_perp_squared * (1 if rel_wind.dot(n_boat) >= 0 else -1)
         wind_force = u_boat * F_parallel + n_boat * F_perp
 
-        # Acceleration due to wind drag
         acceleration = wind_force / MASS
+        velocity = velocity + acceleration * dt * 0.01  # Dampened acceleration
 
-        # Update propulsion velocity (dampened)
-        velocity = velocity + acceleration * dt * 0.01  # You can tune this factor
-
-        # Prevent stalling
         if velocity.mag < 0.1:
             print("Ship stopped due to excessive drag.")
             break
 
-        # Update position based on actual global movement (velocity + current)
-        boat_velocity = velocity + current  # recompute for updated velocity
+        boat_velocity = velocity + current  # Recompute for movement
         position += boat_velocity.mag * dt
         time_elapsed += dt
 
+    # Recalculate average velocity based on actual distance traveled
+    actual_avg_velocity = position / time_elapsed if time_elapsed > 0 else 0
 
-    return time_elapsed
+    # Use average velocity to recompute time for original distance
+    adjusted_time_elapsed = dist_m / actual_avg_velocity if actual_avg_velocity > 0 else 0
+
+    return adjusted_time_elapsed  # Return recomputed time for original distance
         
