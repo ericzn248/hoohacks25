@@ -89,7 +89,7 @@
     <div class="info">
         <p>Starting city: {{ start_city }}</p>
         <p>Ending city: {{ end_city }}</p>
-        <p>Energy Saved: 21.5 MW</p>
+        <p>Energy Saved: {{energySaved}}% </p>
     </div>
 </div>
 
@@ -145,7 +145,7 @@ function startPlotting() {
         ctx.stroke();
         
         index++;
-        setTimeout(plotNextPoint, 500);
+        setTimeout(plotNextPoint, 50);
     }
 
     plotNextPoint();
