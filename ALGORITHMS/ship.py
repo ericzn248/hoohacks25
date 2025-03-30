@@ -73,11 +73,13 @@ class Location():
     def costTo(self, loc2, wind, current):
     dist_km = self.distance(loc2)
     dist_m = dist_km * 1000  # Intended trip distance
-
+    print(dist_m)
     dt = 300  # Time step in seconds
     dx = loc2.long - self.long
     dy = loc2.lat - self.lat
     direction = Vector(dx, dy).unit()
+    total_v = 0
+    count = 0
 
     velocity = direction * SHIP_SPEED  # Engine-driven speed through water
     position = 0.0
@@ -98,18 +100,21 @@ class Location():
         wind_force = u_boat * F_parallel + n_boat * F_perp
 
         acceleration = wind_force / MASS
-        velocity = velocity + acceleration * dt * 0.01  # Dampened acceleration
+        velocity = velocity + acceleration * dt * 0.01 / (1 + time_elapsed / 3600)
+  # Dampened acceleration
 
         if velocity.mag < 0.1:
             print("Ship stopped due to excessive drag.")
             break
 
-        boat_velocity = velocity + current  # Recompute for movement
         position += boat_velocity.mag * dt
         time_elapsed += dt
-
+        total_v += velocity.mag
+        count+= 1
+        
     # Recalculate average velocity based on actual distance traveled
-    actual_avg_velocity = position / time_elapsed if time_elapsed > 0 else 0
+    actual_avg_velocity = total_v/count
+    print(actual_avg_velocity)
 
     # Use average velocity to recompute time for original distance
     adjusted_time_elapsed = dist_m / actual_avg_velocity if actual_avg_velocity > 0 else 0
