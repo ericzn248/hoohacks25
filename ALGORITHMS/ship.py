@@ -11,6 +11,9 @@ SHIP_SPEED = 1.852* 18 #knots => m/s
 def knots2kmh(s):
     return 1.852*s
 
+def deg2rad(d):
+    return math.pi*(d/180)
+
 class Vector():
     def __init__(self, x, y):
         self.x = x
@@ -33,6 +36,9 @@ class Vector():
     def __truediv__(self, scalar):
         return Vector(self.x/scalar, self.y/scalar)
     
+    def __hash__(self):
+        return hash((round(self.x, 6), round(self.y, 6)))
+    
     def dot(self, vec2):
         return self.x*vec2.x + self.y*vec2.y
     
@@ -50,16 +56,17 @@ class Location():
         return abs(self.lat-loc2.lat)+abs(self.long-loc2.long) < 0.0001 #small error for float calcs
     
     def __hash__(self):
-        return hash((round(self.lat, 5), round(self.long, 5)))
+        return hash((round(self.lat, 6), round(self.long, 6)))
     
     def __repr__(self):
         return f"Location({self.lat}, {self.long})"
     
     def distance(self, loc2): #gets distance between locations in kilometers
-        dlat = abs(loc2.lat-self.lat)
-        dlong = abs(loc2.long-self.long)
-        hav = math.sin(dlat/2) * math.sin(dlat/2)
-        + math.cos(self.latr) * math.cos(loc2.latr) * math.sin(dlong/2) * math.sin(dlong/2)
+        dlat = deg2rad(loc2.lat-self.lat)
+        dlong = deg2rad(loc2.long-self.long)
+        hav = math.sin(dlat/2) * math.sin(dlat/2) + \
+            math.cos(self.latr) * math.cos(loc2.latr) * \
+            math.sin(dlong/2) * math.sin(dlong/2)
         c = 2*math.atan2(math.sqrt(hav), math.sqrt(1-hav))
         return 6371*c
     
@@ -93,7 +100,7 @@ class Location():
         wind_force = u_boat * F_parallel + n_boat * F_perp
 
         # Time in seconds through the cell
-        speed = boat_velocity.mag if boat_velocity.mag > 0 else 0.1  # prevent div by zero
+        speed = boat_velocity.mag if boat_velocity.mag > 0 else 0.001  # prevent div by zero
         delta_t = dist_m / speed
 
         # Momentum update
