@@ -24,6 +24,10 @@ class Vector():
     def __eq__(self, vec2):
         return abs(self.x-vec2.x)+abs(self.y-vec2.y) > 0.0001
     
+    def __repr__(self):
+        return f"Vector({self.x}, {self.y})"
+    
+    
     def __add__(self, vec2):
         return Vector(self.x+vec2.x, self.y+vec2.y)
 
@@ -70,55 +74,55 @@ class Location():
         c = 2*math.atan2(math.sqrt(hav), math.sqrt(1-hav))
         return 6371*c
     
-   def costTo(self, loc2, wind, current):
-    dist_km = self.distance(loc2)
-    dist_m = dist_km * 1000
+    def costTo(self, loc2, wind, current):
+        dist_km = self.distance(loc2)
+        dist_m = dist_km * 1000
 
-    dt = 300  # Time step in seconds
-    dx = loc2.long - self.long
-    dy = loc2.lat - self.lat
-    direction = Vector(dx, dy).unit()
+        dt = 300  # Time step in seconds
+        dx = loc2.long - self.long
+        dy = loc2.lat - self.lat
+        direction = Vector(dx, dy).unit()
 
-    # Initial velocity includes current only once
-    velocity = direction * SHIP_SPEED + current
+        # Initial velocity includes current only once
+        velocity = direction * SHIP_SPEED + current
 
-    position = 0.0
-    time_elapsed = 0.0
-    total_v = 0
-    count = 0
+        position = 0.0
+        time_elapsed = 0.0
+        total_v = 0
+        count = 0
 
-    while position < dist_m:
-        # Use current-adjusted velocity directly
-        rel_wind = wind - velocity
+        while position < dist_m:
+            # Use current-adjusted velocity directly
+            rel_wind = wind - velocity
 
-        u_boat = velocity.unit()
-        n_boat = Vector(-u_boat.y, u_boat.x)
+            u_boat = velocity.unit()
+            n_boat = Vector(-u_boat.y, u_boat.x)
 
-        v_parallel = rel_wind.dot(u_boat)
-        v_perp_squared = rel_wind.dot(rel_wind) - v_parallel**2
+            v_parallel = rel_wind.dot(u_boat)
+            v_perp_squared = rel_wind.dot(rel_wind) - v_parallel**2
 
-        F_parallel = 0.5 * RHO * CD * A_PARALLEL * v_parallel * abs(v_parallel)
-        F_perp = 0.5 * RHO * CD * A_PERP * v_perp_squared * (1 if rel_wind.dot(n_boat) >= 0 else -1)
-        wind_force = u_boat * F_parallel + n_boat * F_perp
+            F_parallel = 0.5 * RHO * CD * A_PARALLEL * v_parallel * abs(v_parallel)
+            F_perp = 0.5 * RHO * CD * A_PERP * v_perp_squared * (1 if rel_wind.dot(n_boat) >= 0 else -1)
+            wind_force = u_boat * F_parallel + n_boat * F_perp
 
-        acceleration = wind_force / MASS
+            acceleration = wind_force / MASS
 
-        # Dampened adjustment
-        dampen = 0.01 / (1 + time_elapsed / 3600)
-        velocity = velocity + acceleration * dt * dampen
+            # Dampened adjustment
+            dampen = 0.01 / (1 + time_elapsed / 3600)
+            velocity = velocity + acceleration * dt * dampen
 
-        if velocity.mag < 0.1:
-            print("Ship stopped due to excessive drag.")
-            break
+            if velocity.mag < 0.1:
+                print("Ship stopped due to excessive drag.")
+                break
 
-        position += velocity.mag * dt
-        time_elapsed += dt
-        total_v += velocity.mag
-        count += 1
+            position += velocity.mag * dt
+            time_elapsed += dt
+            total_v += velocity.mag
+            count += 1
 
-    actual_avg_velocity = total_v / count if count > 0 else 0
-    adjusted_time_elapsed = dist_m / actual_avg_velocity if actual_avg_velocity > 0 else 0
+        actual_avg_velocity = total_v / count if count > 0 else 0
+        adjusted_time_elapsed = dist_m / actual_avg_velocity if actual_avg_velocity > 0 else 0
 
-    return adjusted_time_elapsed
+        return adjusted_time_elapsed
 
         
