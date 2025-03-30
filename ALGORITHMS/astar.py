@@ -106,13 +106,8 @@ def constructPath(paths,dest):
         timeSum += p[i-1].costTo(nloc, nwind, ncurrent)
     print(f"TOTAL DISTANCE OF ROUTE FOUND: {distSum}")
     print(f"TOTAL TIME OF ROUTE FOUND: {timeSum}")
-    lats = []
-    longs = []
-    print(p)
-
-    for i in p:
-        lats.append(i.lat)
-        longs.append(i.long)
+    
+    return [p,distSum,timeSum]
     
     # fig, ax = plt.subplots(subplot_kw={"projection": ccrs.PlateCarree()})
 
@@ -132,16 +127,19 @@ def constructPath(paths,dest):
     # # Show plot
     # plt.show()
 
+def displayPath(pList):
+    longs = []
+    lats = []
+    for i in pList:
+        longs.append(i[1])
+        lats.append(i[0])
     plt.plot(longs, lats, marker='o', linestyle='-', color='r')
 
-    # Labels and title
     plt.ylabel("Latitudes")
     plt.xlabel("Longitudes")
     plt.title("Path Found")
 
-    # Display plot
     plt.show()
-    return p
 
 def astar(start,dest):
     time1 = time()
@@ -174,10 +172,11 @@ def astar(start,dest):
             # print(ng)
             openSet.put((nf,ng,nloc,loc))
     
-    print(constructPath(path,dest))
+    [pList, distSum, timeSum] = constructPath(path,dest)
+    pList = [i.toTuple() for i in pList]
     print(f"NODES PROCESSED: {nodes_processed}")
     print(f"TIME TAKEN TO PROCESS: {time()-time1}")
-    print(len(closedSet))
+    return [pList, distSum, timeSum]
 
 def generate(lat1,long1,lat2,long2):
     st = Location(lat1,long1)
@@ -185,10 +184,12 @@ def generate(lat1,long1,lat2,long2):
 
     print(f"START: {st}, DESTINATION: {dest}")
     print(f"TOTAL DISTANCE: {st.distance(dest)}")
-    nmt = st.costTo(dest, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_WIND_MAG, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_CURRENT_MAG)
+    nmt = st.costTo(dest, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_WIND_MAG/2, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_CURRENT_MAG/2)
     print(f"NAIVE MAXIMAL TIME: {nmt}")
 
-    astar(st,dest)
+    [pList, distSum, timeSum] = astar(st,dest)
+    return pList, st.distance(dest), nmt, distSum, timeSum
 
 
-generate(27.5,-83,21,-86.5)
+[pList, d_init, nmt, distSum, timeSum] = generate(27.5,-83,21,-86.5)
+displayPath(pList)
