@@ -103,6 +103,11 @@ def simulation():
     # Retrieve coordinates for the start and end cities
     start_coords = citiesXY.get(start_city, {})
     end_coords = citiesXY.get(end_city, {})
+    start_lats = citiesLatLon.get(start_city, {})
+    end_lats = citiesLatLon.get(end_city, {})
+    scale_x, scale_y = geo_to_pixel_scale(start_lats["lat"], start_lats["lon"], end_lats["lat"], end_lats["lon"],
+                        start_coords["x"], start_coords["y"], end_coords["x"], end_coords["y"]
+)
 
     # Pass the coordinates to the template
     return render_template('simulation.html', start_city=start_city, end_city=end_city, start_coords=start_coords, end_coords=end_coords)
