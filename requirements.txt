@@ -1,0 +1,8 @@
+cfgrib
+xarray
+eccodes
+matplotlib
+requests
+numpy
+hycom
+netCDF4
