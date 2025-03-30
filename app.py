@@ -155,7 +155,7 @@ def simulation():
         ypoint = start_coords["y"] + (latx - start_lats["lat"]) * scale_y
         path.append({"x": xpoint, "y": ypoint})
 
-    # energySaved = 29.18
+    energySaved = round(energySaved, 4)
 
     # path = [{"x": random.randint(100, 1000), "y": random.randint(100, 1000)} for _ in range(50)]
     # Pass the coordinates to the template
