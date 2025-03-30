@@ -70,6 +70,16 @@ current_speed = current_speed.squeeze()
 current_speed.plot(cmap='viridis')
 print(current_speed.shape) 
 
+ds = xr.Dataset({
+    "u10": xr.DataArray(u10.values, coords=[lat_wind, lon_wind], dims=["latitude", "longitude"]),
+    "v10": xr.DataArray(v10.values, coords=[lat_wind, lon_wind], dims=["latitude", "longitude"]),
+    "uo_interp": xr.DataArray(uo_interp, coords=[lat_wind, lon_wind], dims=["latitude", "longitude"]),
+    "vo_interp": xr.DataArray(vo_interp, coords=[lat_wind, lon_wind], dims=["latitude", "longitude"]),
+})
+
+# Save to NetCDF
+ds.to_netcdf(f"final_data/matched_currents_and_winds{forecast_hour}.nc")
+
 plt.title(f"Surface Ocean Current Speed (m/s) on 3/28/25 Forecast Hour {forecast_hour}")
 plt.xlabel("Longitude")
 plt.ylabel("Latitude")

@@ -7,7 +7,7 @@ from datetime import datetime
 
 # -------- CONFIGURATION -------- #
 # Specify date and run hour
-date_str = "20250325"   # YYYYMMDD format
+date_str = "20250329"   # YYYYMMDD format
 run_hour = "00"         # "00", "06", "12", or "18"
 forecast_hour = "000"   # Forecast lead time in hours
 

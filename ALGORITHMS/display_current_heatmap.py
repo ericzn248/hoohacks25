@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # ---------------- CONFIGURATION ---------------- #
 # Define the date and forecast hour of interest
-date_str = "20250328"  # Format: YYYYMMDD
+date_str = "20250329"  # Format: YYYYMMDD
 forecast_hour = "000"  # Forecast hour (e.g., "000" for analysis time)
 
 # Construct the file name and URL
