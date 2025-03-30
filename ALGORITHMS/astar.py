@@ -5,8 +5,7 @@ import math
 import numpy as np
 from time import time
 import matplotlib.pyplot as plt
-
-
+import tkinter
 
 ds = xr.open_dataset('final_data/matched_currents_and_winds000.nc')
 
@@ -17,7 +16,7 @@ CURRENTS_Y = ds['vo_interp'].values
 WINDS_X = ds['u10'].values
 WINDS_Y = ds['v10'].values
 
-# CURRENT_DCT = {}
+# CURRENT_DCT = {} #can potentially pre-process but kinda slow
 # time1 = time()
 # for i in range(len(LATS)):
 #     for j in range(len(LONGS)):
@@ -47,7 +46,7 @@ for i in range(len(LATS)):
             MAX_WIND_MAG = tmp
 MAX_WIND_MAG = math.sqrt(MAX_WIND_MAG)
 
-# lts = []
+# lts = [] #for debugging, displayed inputted non-nan winds/currents
 # lngs = []
 # for i in range(len(LATS)):
 #     for j in range(len(LONGS)): 
@@ -106,7 +105,6 @@ def constructPath(paths,dest):
         timeSum += p[i-1].costTo(nloc, nwind, ncurrent)
     print(f"TOTAL DISTANCE OF ROUTE FOUND: {distSum}")
     print(f"TOTAL TIME OF ROUTE FOUND: {timeSum}")
-    
     return [p,distSum,timeSum]
     
     # fig, ax = plt.subplots(subplot_kw={"projection": ccrs.PlateCarree()})
@@ -127,12 +125,18 @@ def constructPath(paths,dest):
     # # Show plot
     # plt.show()
 
-def displayPath(pList):
+def displayPath(pList,closedSet = set()):
     longs = []
     lats = []
     for i in pList:
         longs.append(i[1])
         lats.append(i[0])
+    clongs = []
+    clats = []
+    for i in closedSet:
+        clats.append(i.lat)
+        clongs.append(i.long)
+    plt.scatter(clongs, clats, marker='o', color='b')
     plt.plot(longs, lats, marker='o', linestyle='-', color='r')
 
     plt.ylabel("Latitudes")
@@ -176,6 +180,7 @@ def astar(start,dest):
     pList = [i.toTuple() for i in pList]
     print(f"NODES PROCESSED: {nodes_processed}")
     print(f"TIME TAKEN TO PROCESS: {time()-time1}")
+    displayPath(pList,closedSet)
     return [pList, distSum, timeSum]
 
 def generate(lat1,long1,lat2,long2):
@@ -186,10 +191,8 @@ def generate(lat1,long1,lat2,long2):
     print(f"TOTAL DISTANCE: {st.distance(dest)}")
     nmt = st.costTo(dest, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_WIND_MAG/2, Vector(st.lat-dest.lat,st.long-dest.long).unit()*MAX_CURRENT_MAG/2)
     print(f"NAIVE MAXIMAL TIME: {nmt}")
-
     [pList, distSum, timeSum] = astar(st,dest)
     return pList, st.distance(dest), nmt, distSum, timeSum
 
 
 [pList, d_init, nmt, distSum, timeSum] = generate(27.5,-83,21,-86.5)
-displayPath(pList)
