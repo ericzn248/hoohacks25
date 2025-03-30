@@ -1,12 +1,12 @@
 from time import time
 import math
 
-MASS = 1e7  # mass of ship in kg
+MASS = 1.5e8  # mass of ship in kg
 RHO = 1.293  # air density
 CD = 1.28  # drag coefficient for flat surface
 A_PARALLEL = 1500  # frontal area (m^2)
 A_PERP = 9000  # side area (m^2)
-SHIP_SPEED = 1.852* 18 #knots => m/s
+SHIP_SPEED = 9.26 #18 knots => m/s
 
 def knots2kmh(s):
     return 1.852*s
@@ -71,44 +71,54 @@ class Location():
         return 6371*c
     
     def costTo(self, loc2, wind, current):
-        dist_km = self.distance(loc2)
-        dist_m = dist_km * 1000
+    dist_km = self.distance(loc2)
+    dist_m = dist_km * 1000
 
-        dx = loc2.long - self.long
-        dy = loc2.lat - self.lat
-        direction = Vector(dx, dy).unit()
-        intended = direction * SHIP_SPEED
+    dt = 300  # Time step in seconds
+    dx = loc2.long - self.long
+    dy = loc2.lat - self.lat
+    direction = Vector(dx, dy).unit()
 
-        # Actual boat velocity (intended + current)
-        boat_velocity = intended + current
+    velocity = direction * SHIP_SPEED  # Engine-driven speed through water
+    position = 0.0
+    time_elapsed = 0.0
 
-        # Relative wind
+    while position < dist_m:
+        # Compute actual ship motion through the world (water + current)
+        boat_velocity = velocity + current
+
+        # Compute wind drag relative to air
         rel_wind = wind - boat_velocity
 
-        # Unit vectors
+        # Drag direction basis
         u_boat = boat_velocity.unit()
-        # Perpendicular unit vector (rotate 90 degrees)
         n_boat = Vector(-u_boat.y, u_boat.x)
 
         # Wind components
         v_parallel = rel_wind.dot(u_boat)
         v_perp_squared = rel_wind.dot(rel_wind) - v_parallel**2
 
-        # Wind force vector
-        F_parallel = 0.5 * RHO * CD * A_PARALLEL * v_parallel**2 * (1 if v_parallel >= 0 else -1)
+        # Drag forces
+        F_parallel = 0.5 * RHO * CD * A_PARALLEL * v_parallel * abs(v_parallel)
         F_perp = 0.5 * RHO * CD * A_PERP * v_perp_squared * (1 if rel_wind.dot(n_boat) >= 0 else -1)
         wind_force = u_boat * F_parallel + n_boat * F_perp
 
-        # Time in seconds through the cell
-        speed = boat_velocity.mag if boat_velocity.mag > 0 else 0.001  # prevent div by zero
-        delta_t = dist_m / speed
+        # Acceleration due to wind drag
+        acceleration = wind_force / MASS
 
-        # Momentum update
-        delta_p = wind_force * delta_t
-        total_momentum = boat_velocity * MASS + delta_p
+        # Update propulsion velocity (dampened)
+        velocity = velocity + acceleration * dt * 0.01  # You can tune this factor
 
-        # Final velocity = total momentum / mass
-        final_velocity = total_momentum * (1 / MASS)
+        # Prevent stalling
+        if velocity.mag < 0.1:
+            print("Ship stopped due to excessive drag.")
+            break
 
-        return dist_m / final_velocity.mag  # This is time in seconds
+        # Update position based on actual global movement (velocity + current)
+        boat_velocity = velocity + current  # recompute for updated velocity
+        position += boat_velocity.mag * dt
+        time_elapsed += dt
+
+
+    return time_elapsed
         
