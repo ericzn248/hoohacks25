@@ -18,6 +18,8 @@ print("wint lat values", lat_wind.size)
 lon_wind = u10.longitude.values
 print("wind lon values", lon_wind.size)
 
+
+
 # Load current (RTOFS) dataset
 rtofs = xr.open_dataset(f"rtofs_data\{file_name_rtofs}")
 uo = rtofs['u_velocity']
@@ -27,10 +29,15 @@ print("current lat values", lat_curr.size)
 lon_curr = rtofs['Longitude'].values
 print("current Lon values", lon_curr.size)
 print("loaded in values")
+
+lon_wind = lon_wind - 180
+lon_curr = lon_curr - 180
+
 # Create meshgrids of GFS and RTOFS
 lon_wind_grid, lat_wind_grid = np.meshgrid(lon_wind, lat_wind)   # (721, 1440)
 lon_curr_grid, lat_curr_grid = lon_curr, lat_curr   # (3298, 4500)
 print("created meshgrids")
+
 
 # Flatten current grid and create KDTree for fast lookup
 curr_points = np.column_stack([lat_curr_grid.ravel(), lon_curr_grid.ravel()])
@@ -70,6 +77,8 @@ current_speed = current_speed.squeeze()
 current_speed.plot(cmap='viridis')
 print(current_speed.shape) 
 
+print("Latitude range:", lat_wind.min(), "to", lat_wind.max())
+print("Longitude range:", lon_wind.min(), "to", lon_wind.max())
 ds = xr.Dataset({
     "u10": xr.DataArray(u10.values, coords=[lat_wind, lon_wind], dims=["latitude", "longitude"]),
     "v10": xr.DataArray(v10.values, coords=[lat_wind, lon_wind], dims=["latitude", "longitude"]),
