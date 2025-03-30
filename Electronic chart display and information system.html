@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ship Route Plotter</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #container { position: relative; width: 1000px; height: 600px; }
+        canvas { position: absolute; top: 0; left: 0; }
+        button { position: absolute; top: 10px; left: 10px; z-index: 10; padding: 10px 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div id="container">
+    <img id="map" src="images/nautical_map.jpg" alt="World Map" width="1000" height="600">
+    <canvas id="canvas" width="1000" height="600"></canvas>
+    <button onclick="startPlotting()">Start Plotting Optimal Trajectory</button>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+// Example pixel locations of the cities
+const startCity = { x: 200, y: 300 };
+const endCity = { x: 800, y: 500 };
+
+// Example path coordinates
+const path = [
+    { x: 200, y: 300 },
+    { x: 350, y: 320 },
+    { x: 500, y: 400 },
+    { x: 650, y: 450 },
+    { x: 800, y: 500 }
+];
+
+// Draw the initial map with city markers
+function drawMap() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw starting city
+    ctx.fillStyle = 'green';
+    ctx.beginPath();
+    ctx.arc(startCity.x, startCity.y, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Draw ending city
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(endCity.x, endCity.y, 10, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+drawMap();
+
+function startPlotting() {
+    let index = 0;
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+    
+    function plotNextPoint() {
+        if (index >= path.length - 1) return;
+        const current = path[index];
+        const next = path[index + 1];
+        
+        ctx.beginPath();
+        ctx.moveTo(current.x, current.y);
+        ctx.lineTo(next.x, next.y);
+        ctx.stroke();
+        
+        index++;
+        setTimeout(plotNextPoint, 500);
+    }
+
+    plotNextPoint();
+}
+</script>
+</body>
+</html>
