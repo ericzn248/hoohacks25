@@ -108,9 +108,6 @@ class Location():
         position += boat_velocity.mag * dt
         time_elapsed += dt
 
-        if int(time_elapsed) % 600 == 0:
-            print(f"t={time_elapsed:.0f}s | v={velocity.mag:.2f} m/s | dist={position:.0f} m")
-
     # Recalculate average velocity based on actual distance traveled
     actual_avg_velocity = position / time_elapsed if time_elapsed > 0 else 0
 
