@@ -180,7 +180,7 @@ def astar(start,dest):
     pList = [i.toTuple() for i in pList]
     print(f"NODES PROCESSED: {nodes_processed}")
     print(f"TIME TAKEN TO PROCESS: {time()-time1}")
-    displayPath(pList,closedSet)
+    # displayPath(pList,closedSet)
     return [pList, distSum, timeSum]
 
 def generate(lat1,long1,lat2,long2):
