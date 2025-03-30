@@ -70,26 +70,28 @@ class Location():
         c = 2*math.atan2(math.sqrt(hav), math.sqrt(1-hav))
         return 6371*c
     
-    def costTo(self, loc2, wind, current):
+   def costTo(self, loc2, wind, current):
     dist_km = self.distance(loc2)
-    dist_m = dist_km * 1000  # Intended trip distance
-    print(dist_m)
+    dist_m = dist_km * 1000
+
     dt = 300  # Time step in seconds
     dx = loc2.long - self.long
     dy = loc2.lat - self.lat
     direction = Vector(dx, dy).unit()
+
+    # Initial velocity includes current only once
+    velocity = direction * SHIP_SPEED + current
+
+    position = 0.0
+    time_elapsed = 0.0
     total_v = 0
     count = 0
 
-    velocity = direction * SHIP_SPEED  # Engine-driven speed through water
-    position = 0.0
-    time_elapsed = 0.0
-
     while position < dist_m:
-        boat_velocity = velocity + current
-        rel_wind = wind - boat_velocity
+        # Use current-adjusted velocity directly
+        rel_wind = wind - velocity
 
-        u_boat = boat_velocity.unit()
+        u_boat = velocity.unit()
         n_boat = Vector(-u_boat.y, u_boat.x)
 
         v_parallel = rel_wind.dot(u_boat)
@@ -100,24 +102,23 @@ class Location():
         wind_force = u_boat * F_parallel + n_boat * F_perp
 
         acceleration = wind_force / MASS
-        velocity = velocity + acceleration * dt * 0.01 / (1 + time_elapsed / 3600)
-  # Dampened acceleration
+
+        # Dampened adjustment
+        dampen = 0.01 / (1 + time_elapsed / 3600)
+        velocity = velocity + acceleration * dt * dampen
 
         if velocity.mag < 0.1:
             print("Ship stopped due to excessive drag.")
             break
 
-        position += boat_velocity.mag * dt
+        position += velocity.mag * dt
         time_elapsed += dt
         total_v += velocity.mag
-        count+= 1
-        
-    # Recalculate average velocity based on actual distance traveled
-    actual_avg_velocity = total_v/count
-    print(actual_avg_velocity)
+        count += 1
 
-    # Use average velocity to recompute time for original distance
+    actual_avg_velocity = total_v / count if count > 0 else 0
     adjusted_time_elapsed = dist_m / actual_avg_velocity if actual_avg_velocity > 0 else 0
 
-    return adjusted_time_elapsed  # Return recomputed time for original distance
+    return adjusted_time_elapsed
+
         
