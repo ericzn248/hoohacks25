@@ -4,6 +4,8 @@ import os
 import time
 import threading
 import random
+import ALGORITHMS.ship as ship
+from ALGORITHMS import astar
 
 app = Flask(__name__)
 CORS(app)
@@ -92,10 +94,10 @@ def get_progress():
 
 
 citiesLatLon = {
-    "Houston": {"lat": 29.7604, "lon": -95.3698},
+    "Houston": {"lat": 29, "lon": -94.5},
     "Tampa": {"lat": 27.5, "lon": -83},
-    "Mexico City": {"lat": 19.4326, "lon": -99.1332},
-    "New Orleans": {"lat": 29.9511, "lon": -90.0715},
+    "Mexico City": {"lat": 22, "lon": -97.5},
+    "New Orleans": {"lat": 29.5, "lon": -89},
     "Cancun": {"lat": 21, "lon": -86.5},
 }
 
@@ -137,7 +139,8 @@ def simulation():
     start_lats = citiesLatLon.get(start_city, {})
     end_lats = citiesLatLon.get(end_city, {})
     scale_x, scale_y = geo_to_pixel_scale(start_lats["lat"], start_lats["lon"], end_lats["lat"], end_lats["lon"], start_coords["x"], start_coords["y"], end_coords["x"], end_coords["y"])
-    LatLongInput = [(27.5, -83), (27.25, -83), (27.0, -83), (26.75, -83), (26.5, -83), (26.25, -83), (26.0, -83), (25.75, -83), (25.5, -83), (25.25, -83.25), (25.0, -83.5), (24.75, -83.75), (24.5, -83.75), (24.25, -84.0), (24.0, -84.25), (23.75, -84.5), (23.5, -84.5), (23.25, -84.75), (23.0, -85.0), (22.75, -85.25), (22.5, -85.5), (22.25, -85.5), (22.0, -85.75), (21.75, -85.75), (21.5, -86.0), (21.25, -86.25), (21, -86.5)]
+    
+    LatLongInput, energySaved = astar.generate(start_lats["lat"], start_lats["lon"], end_lats["lat"], end_lats["lon"])
 
     # Tampa = {"lat": 27.5, "lon": -83}
     # Cancun = {"lat": 21, "lon": -86.5}
