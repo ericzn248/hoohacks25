@@ -20,9 +20,21 @@ class Vector():
 
     def __eq__(self, vec2):
         return abs(self.x-vec2.x)+abs(self.y-vec2.y) > 0.0001
+    
+    def __add__(self, vec2):
+        return Vector(self.x+vec2.x, self.y+vec2.y)
 
     def __sub__(self, vec2):
         return Vector(self.x-vec2.x, self.y-vec2.y)
+    
+    def __mul__(self, scalar):
+        return Vector(self.x*scalar, self.y*scalar)
+    
+    def __truediv__(self, scalar):
+        return Vector(self.x/scalar, self.y/scalar)
+    
+    def dot(self, vec2):
+        return self.x*vec2.x + self.y*vec2.y
     
     def unit(self):
         return Vector(self.x/self.mag, self.y/self.mag)
@@ -39,6 +51,9 @@ class Location():
     
     def __hash__(self):
         return hash((round(self.lat, 5), round(self.long, 5)))
+    
+    def __repr__(self):
+        return f"Location({self.lat}, {self.long})"
     
     def distance(self, loc2): #gets distance between locations in kilometers
         dlat = abs(loc2.lat-self.lat)
@@ -88,5 +103,5 @@ class Location():
         # Final velocity = total momentum / mass
         final_velocity = total_momentum * (1 / MASS)
 
-        return dist_m / final_velocity  # This is time in seconds
+        return dist_m / final_velocity.mag  # This is time in seconds
         
