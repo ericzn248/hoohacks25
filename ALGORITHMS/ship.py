@@ -6,6 +6,10 @@ RHO = 1.293  # air density
 CD = 1.28  # drag coefficient for flat surface
 A_PARALLEL = 1500  # frontal area (m^2)
 A_PERP = 9000  # side area (m^2)
+SHIP_SPEED = 1.852* 18 #knots => m/s
+
+def knots2kmh(s):
+    return 1.852*s
 
 class Vector():
     def __init__(self, x, y):
@@ -25,7 +29,7 @@ class Location():
         return abs(self.lat-loc2.lat)+abs(self.long-loc2.long) < 0.0001 #small error for float calcs
     
     def __hash__(self):
-        return hash((round(self.lat, 5), round(self.lon, 5)))
+        return hash((round(self.lat, 5), round(self.long, 5)))
     
     def distance(self, loc2): #gets distance between locations in kilometers
         dlat = abs(loc2.lat-self.lat)
@@ -35,14 +39,14 @@ class Location():
         c = 2*math.atan2(math.sqrt(hav), math.sqrt(1-hav))
         return 6371*c
     
-     def costTo(self, loc2, wind, current):
+    def costTo(self, loc2, wind, current):
         dist_km = self.distance(loc2)
         dist_m = dist_km * 1000
 
         dx = loc2.long - self.long
         dy = loc2.lat - self.lat
         direction = Vector(dx, dy).unit()
-        intended = direction * 18  # Sets ship's intended speed as 18 m/s in that direction
+        intended = direction * SHIP_SPEED  # Sets ship's intended speed as 18 m/s in that direction
 
         # Actual boat velocity (intended + current)
         boat_velocity = intended + current
