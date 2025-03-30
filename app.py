@@ -51,6 +51,11 @@ def loading():
 progress = {"value": 0}
 
 # Background thread to simulate calculations
+def geo_to_pixel_scale(lat1, lon1, lat2, lon2, x1, y1, x2, y2):
+    scale_x = (x2 - x1) / (lon2 - lon1)
+    scale_y = (y2 - y1) / (lat2 - lat1)
+    return scale_x, scale_y
+
 def perform_calculations():
     global progress
     for i in range(1, 101):  # Simulate progress from 1% to 100%
