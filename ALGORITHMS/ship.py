@@ -18,6 +18,15 @@ class Vector():
         self.dir = math.atan2(y,x)
         self.mag = math.sqrt(x**2+y**2)
 
+    def __eq__(self, vec2):
+        return abs(self.x-vec2.x)+abs(self.y-vec2.y) > 0.0001
+
+    def __sub__(self, vec2):
+        return Vector(self.x-vec2.x, self.y-vec2.y)
+    
+    def unit(self):
+        return Vector(self.x/self.mag, self.y/self.mag)
+
 class Location():
     def __init__(self, lat, long):
         self.lat = lat
@@ -46,7 +55,7 @@ class Location():
         dx = loc2.long - self.long
         dy = loc2.lat - self.lat
         direction = Vector(dx, dy).unit()
-        intended = direction * SHIP_SPEED  # Sets ship's intended speed as 18 m/s in that direction
+        intended = direction * SHIP_SPEED
 
         # Actual boat velocity (intended + current)
         boat_velocity = intended + current
