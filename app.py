@@ -11,6 +11,10 @@ CORS(app)
 def home():
     return send_from_directory(os.path.dirname(__file__), 'index.html')
 
+@app.route('/enterCities')
+def enterCities():
+    return send_from_directory(os.path.dirname(__file__), 'entercities.html')
+
 @app.route('/images/<path:filename>')
 def serve_images(filename):
     return send_from_directory(os.path.join(os.path.dirname(__file__), 'images'), filename)

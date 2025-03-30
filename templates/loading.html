@@ -76,9 +76,9 @@
 
     <script>
         // Fetch city names from Flask server using template variables
-        const city1 = "{{ city1 }}";
-        const city2 = "{{ city2 }}";
-        document.getElementById('route-title').textContent = `Calculating route from ${city1} to ${city2}`;
+        const startCity = "{{ city1 }}";
+        const endCity = "{{ city2 }}";
+        document.getElementById('route-title').textContent = `Calculating route from ${startCity} to ${endCity}`;
 
         // Function to fetch progress from the server
         async function fetchProgress() {
@@ -104,7 +104,7 @@
                 progressBar.textContent = `${progress}%`;
                 if (progress >= 100) {
                     clearInterval(intervalId);
-                    window.location.href = '/simulation'; // Redirect to simulation page
+                    window.location.href = `/simulation?start=${encodeURIComponent(startCity)}&end=${encodeURIComponent(endCity)}`; // Redirect to simulation page
                 }
             }
         }, 1000); // Check progress every 1 second
