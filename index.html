@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shipping Supply Chain Optimization</title>
+    <title>BlueVect - Sustainable Shipping Optimization</title>
     <style>
+        /* General styles */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -14,11 +15,11 @@
             color: #444;
         }
 
+        /* Hero section */
         .hero {
             position: relative;
             width: 100%;
             height: 80vh;
-            /* Makes the hero section take up 80% of the viewport height */
             overflow: hidden;
         }
 
@@ -26,9 +27,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Ensures the image covers the entire hero section */
             filter: brightness(70%);
-            /* Darkens the image slightly for better text contrast */
         }
 
         .hero-text {
@@ -41,50 +40,67 @@
         }
 
         .hero-text h1 {
-            font-size: 60px;
+            font-size: 170px;
             margin: 0;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
         }
 
         .hero-text p {
-            font-size: 24px;
+            font-size: 64px;
             margin-top: 10px;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
         }
 
+        /* Main content */
         main {
             padding: 40px 20px;
-            max-width: 1200px;
+            max-width: 1750px;
             margin: 0 auto;
             text-align: center;
         }
 
         main h2 {
-            font-size: 36px;
+            font-size: 50px;
             margin-bottom: 20px;
             color: #007bff;
         }
 
-        main p {
-            font-size: 20px;
+        main ul {
+            text-align: left;
+            font-size: 25px;
             line-height: 1.8;
-            margin-bottom: 30px;
+            margin: 20px auto;
+            /* max-width: 800px; */
         }
 
-        .image-section {
+        /* general formatting for a double conatiner */
+        .double-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: center;
             gap: 20px;
             margin-top: 30px;
         }
 
-        .image-section img {
-            width: 45%;
+        .double-container .text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .double-container .image {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .double-container img {
+            width: 100%;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
+
+        /* Call-to-action button */
         .cta-button {
             display: inline-block;
             padding: 15px 40px;
@@ -104,6 +120,7 @@
             background-color: #0056b3;
         }
 
+        /* Footer */
         footer {
             background-color: #333;
             color: white;
@@ -120,36 +137,65 @@
 </head>
 
 <body>
-
-    </div>
     <div class="hero">
         <img src="images/ships_bg.png" alt="Ships on the Ocean">
         <div class="hero-text">
-            <h1>Optimize Your Shipping Routes</h1>
-            <p>Reduce fuel consumption and carbon emissions with cutting-edge technology</p>
+            <h1>BlueVect</h1>
+            <p>Optimizing Shipping for a Sustainable Future</p>
         </div>
     </div>
     <main>
-        <h2>Why Our App is Needed</h2>
-        <p>
-            The shipping industry is responsible for a significant portion of global carbon emissions.
-            By optimizing shipping routes, we can reduce fuel consumption, lower costs, and contribute
-            to a more sustainable future. Our app is designed to make shipping smarter and greener.
-        </p>
-        <h2>How It Works</h2>
-        <p>
-            Our app leverages real-time data on wind patterns and ocean currents to calculate the most
-            energy-efficient routes for ships. By using these natural forces, we help reduce fuel
-            consumption and minimize environmental impact.
-        </p>
-        <div class="image-section">
-            <img src="images/winds_map.png" alt="Winds Map">
-            <img src="images/currents_map.png" alt="Ocean Currents Map">
+        <div class="double-container">
+            <div class="text">
+                <h2>Why BlueVect?</h2>
+                <ul>
+                    <li>The shipping industry carries out more than 90% of global trade and is responsible for about 3%
+                        of global CO2 emissions (IMO, 2020).</li>
+                    <li>By 2050, emissions from the shipping industry could increase by up to 130% compared to 2008
+                        levels.</li>
+                    <li>However, Green House Gas (GHG) emissions from the shipping industry in 2050 should be half of
+                        the emission level in 2008 (Mepc, 2018).</li>
+                    <li>Optimizing ship operation behavior to minimize fuel consumption can play a significant role in
+                        achieving these targets.</li>
+                    <li>Accurate and reliable weather forecasting data is key to enabling this optimization (R. Zaccone,
+                        Ottaviani, Figari, and Altosole, 2018).</li>
+                </ul>
+            </div>
+            <div class="image">
+                <img src="images/ship_example.jpeg" alt="Ship Example">
+            </div>
+        </div>
+
+        <div class="double-container">
+            <div class="image">
+                <img src="images/ship_example.jpeg" alt="Ship Example">
+            </div>
+            <div class="text">
+                <h2>Our Algorithm</h2>
+                <ul>
+                    <li>BlueVect uses real-time data on wind patterns and ocean currents to calculate the most
+                        energy-efficient routes for ships.</li>
+                    <li>By leveraging these natural forces, BlueVect helps reduce fuel consumption and minimize
+                        environmental impact.</li>
+                    <li>Advanced algorithms ensure that shipping companies can achieve their sustainability goals while
+                        optimizing operational efficiency.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="double-container">
+            <div class="image">
+                <img src="images/winds_map.png" alt="Winds Map">
+                <p class="caption">Wind Map: Used to optimize routes based on wind patterns.</p>
+            </div>
+            <div class="image">
+                <img src="images/currents_map.png" alt="Ocean Currents Map">
+                <p class="caption">Current Map: Used to optimize routes based on ocean currents.</p>
+            </div>
         </div>
         <a href="/enterCities" class="cta-button">Get Started</a>
     </main>
     <footer>
-        <p>&copy; 2023 Shipping Supply Chain Optimization. All rights reserved.</p>
+        <p>&copy; 2023 BlueVect. All rights reserved.</p>
     </footer>
 </body>
 
